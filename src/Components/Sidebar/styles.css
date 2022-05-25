@@ -43,6 +43,10 @@
   margin-top: 20px;
 }
 
+.content-sidebar-buttons p {
+  font-size: 18px;
+}
+
 .content-sidebar-buttons button {
   width: 100%;
   height: 50px;
