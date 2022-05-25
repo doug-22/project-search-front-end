@@ -1,0 +1,83 @@
+.container-home {
+  display: flex;
+}
+
+.content-cards {
+  width: calc(100% - 300px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.content-form {
+  width: 60vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.content-form .input {
+  height: 25px;
+  border-radius: 5px;
+  border: 1px solid #000000;
+  font-size: 16px;
+  padding: 0 10px 0 10px;
+}
+
+.content-form .input:nth-child(1) {
+  width: 30%;
+}
+.content-form .input:nth-child(2) {
+  width: 60%;
+}
+
+.content-form-date {
+  width: 60vw;
+  height: 40px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.content-form-date .input-date {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.content-form-date div label {
+  font-size: 16px;
+}
+
+.button-form-search {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  transform: scale(0.9);
+  background-color: #246992;
+  color: #ffffff;
+  font-size: 18px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-form-search:hover {
+  transform: scale(1);
+  background-color: #305a75;
+}
+
+.content-filters {
+  width: 60vw;
+  display: flex;
+  gap: 10px;
+}
+
+.content-filters span {
+  font-size: 14px;
+}

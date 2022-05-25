@@ -7,6 +7,9 @@
   flex-direction: column;
   align-items: center;
   gap: 20px;
+
+  position: sticky;
+  top: 0;
 }
 
 .content-logo {
@@ -38,6 +41,10 @@
   flex-direction: column;
   gap: 10px;
   margin-top: 20px;
+}
+
+.content-sidebar-buttons p {
+  font-size: 18px;
 }
 
 .content-sidebar-buttons button {
