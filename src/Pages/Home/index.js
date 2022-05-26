@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import DatePicker from 'react-datepicker';
 import { BsSearch } from 'react-icons/bs';
 
 import Sidebar from '../../Components/Sidebar';
 import Card from '../../Components/Card';
+import Api from '../../Services/Api';
 
 import './styles.css';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -12,17 +13,44 @@ import 'react-datepicker/dist/react-datepicker.css';
 function Home() {
   
   const [searchWithDates, setSearchWithDates] = useState(false);
+  const [responseFacets, setResponseFacets] = useState();
+  const [responseDocs, setResponseDocs] = useState();
+  const [filters, setFilters] = useState('');
+
+  useEffect(() => {
+    const loadApi = async () => {
+      try {
+        let response = await Api.getSearch();
+        console.log(response)
+        setResponseDocs(response.data.response.docs);
+        setResponseFacets(response.data.facet_counts.facet_fields);
+      } catch(error) {
+        console.error(error);
+      }
+    };
+
+    loadApi();
+  }, []);
+  
 
   const handleSearchWithDates = (value) => {
     if(value.target.value !== 'Período entre fechas') {
-      searchWithDates(false)
+      setSearchWithDates(false)
       return;
     }
     setSearchWithDates(true)
   };
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     console.log(values);
+    if(values.search.length !== 0) {
+      let response = await Api.getSearch(values.search);
+      console.log(response)
+      setResponseDocs(response.data.response.docs);
+      setResponseFacets(response.data.facet_counts.facet_fields);
+
+      setFilters(`busca: ${values.search}`);
+    }
   };
 
   const initialValues = {
@@ -33,89 +61,96 @@ function Home() {
   };
 
 
+  console.log(responseDocs)
+  console.log(responseFacets)
 
   return (
-    <div className='container-home'>
-      <Sidebar />
-      <div className='content-cards'>
-        <Formik
-          initialValues={initialValues}
-          onSubmit={handleSubmit}
-        >
-          <Form>
-          <div className='content-form'>
-            <Field as='select' name='type' className='input' onClick={handleSearchWithDates}>
-              <option value={null}>Campo específico</option>
-              <option value={'Asunto'}>Asunto</option>
-              <option value={'Nombre del archivo'}>Nombre del archivo</option>
-              <option value={'Número de oficina'}>Número de oficina</option>
-              <option value={'Organo radication'}>Organo radication</option>
-              <option value={'Ponente'}>Ponente</option>
-              <option value={'Secretario'}>Secretario</option>
-              <option value={'Vocacion'}>Vocacion</option>
-              <option value={'Archivo de datos'}>Archivo de datos</option>
-              <option value={'Período entre fechas'}>Período entre fechas</option>
-            </Field>
-            <Field name='search' type='text' placeholder='Pesquisar' className='input'/>
-            <button type='submit' className='button-form-search'>
-              <BsSearch />
-            </button>
-          </div>
-          {searchWithDates && 
-            <div className='content-form-date'>
-              <div className='input-date'>
-                <label>Data inicial:</label>
-                <Field name="initialDate">
-                  {({form, field}) => {
-                    const {setFieldValue} = form
-                    const { value } = field
-                    return (
-                      <DatePicker
-                        id="initialDate"
-                        selected={value}
-                        onChange={(date) => setFieldValue('initialDate', date)}
-                        placeholderText='Selecione da data inicial'
-                        dateFormat='dd/MM/yyyy'
-                      />
-                    );
-                  }}
+    <>
+      {responseFacets &&
+        <div className='container-home'>
+          <Sidebar facet_subject={responseFacets.tipoAsunto_facet} facet_secretary={responseFacets.secretario_facet} facet_speaker={responseFacets.ponente_facet} />
+          <div className='content-cards'>
+            <Formik
+              initialValues={initialValues}
+              onSubmit={handleSubmit}
+            >
+              <Form>
+              <div className='content-form'>
+                <Field as='select' name='type' className='input' onClick={handleSearchWithDates}>
+                  <option value={null}>Campo específico</option>
+                  <option value={'Asunto'}>Asunto</option>
+                  <option value={'Nombre del archivo'}>Nombre del archivo</option>
+                  <option value={'Número de oficina'}>Número de oficina</option>
+                  <option value={'Organo radication'}>Organo radication</option>
+                  <option value={'Ponente'}>Ponente</option>
+                  <option value={'Secretario'}>Secretario</option>
+                  <option value={'Vocacion'}>Vocacion</option>
+                  <option value={'Archivo de datos'}>Archivo de datos</option>
+                  <option value={'Período entre fechas'}>Período entre fechas</option>
                 </Field>
+                <Field name='search' type='text' placeholder='Pesquisar' className='input'/>
+                <button type='submit' className='button-form-search'>
+                  <BsSearch />
+                </button>
               </div>
-              <div className='input-date'>
-                <label>Data final:</label>
-                <Field name="finalDate">
-                  {({form, field}) => {
-                    const {setFieldValue} = form
-                    const { value } = field
-                    return (
-                      <DatePicker
-                        id="finalDate"
-                        selected={value}
-                        onChange={(date) => setFieldValue('finalDate', date)}
-                        placeholderText='Selecione da data final'
-                        dateFormat='dd/MM/yyyy'
-                      />
-                    );
-                  }}
-                </Field>
-              </div>
+              {searchWithDates && 
+                <div className='content-form-date'>
+                  <div className='input-date'>
+                    <label>Data inicial:</label>
+                    <Field name="initialDate">
+                      {({form, field}) => {
+                        const {setFieldValue} = form
+                        const { value } = field
+                        return (
+                          <DatePicker
+                            id="initialDate"
+                            selected={value}
+                            onChange={(date) => setFieldValue('initialDate', date)}
+                            placeholderText='Selecione da data inicial'
+                            dateFormat='dd/MM/yyyy'
+                          />
+                        );
+                      }}
+                    </Field>
+                  </div>
+                  <div className='input-date'>
+                    <label>Data final:</label>
+                    <Field name="finalDate">
+                      {({form, field}) => {
+                        const {setFieldValue} = form
+                        const { value } = field
+                        return (
+                          <DatePicker
+                            id="finalDate"
+                            selected={value}
+                            onChange={(date) => setFieldValue('finalDate', date)}
+                            placeholderText='Selecione da data final'
+                            dateFormat='dd/MM/yyyy'
+                          />
+                        );
+                      }}
+                    </Field>
+                  </div>
+                </div>
+              }
+              </Form>
+            </Formik>
+            <div className='content-filters'>
+              <span><b>Filtros:</b></span>
+              <span>{filters}</span>
             </div>
-          }
-          </Form>
-        </Formik>
-        <div className='content-filters'>
-          <span><b>Filtros:</b></span>
-          <span>Teste</span>
+
+            
+            {responseDocs &&
+              responseDocs.map((item, key) => (
+                <Card key={key} subject={item.tipoAsunto} secretary={item.secretario} file={item.nome_arquivo} description={item.data_file} />
+              ))
+            }
+
+          </div>
         </div>
-        
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-      </div>
-    </div>
+      }
+    </>
   );
 }
 
