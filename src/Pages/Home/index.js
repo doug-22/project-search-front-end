@@ -9,6 +9,7 @@ import Api from '../../Services/Api';
 
 import './styles.css';
 import 'react-datepicker/dist/react-datepicker.css';
+import UtilsFunctions from '../../Utils/Utils.functions';
 
 function Home() {
   
@@ -16,6 +17,8 @@ function Home() {
   const [responseFacets, setResponseFacets] = useState();
   const [responseDocs, setResponseDocs] = useState();
   const [filters, setFilters] = useState('');
+  const [initialDate, setInitialDate] = useState();
+  const [finalDate, setFinalDate] = useState();
 
   useEffect(() => {
     const loadApi = async () => {
@@ -34,7 +37,7 @@ function Home() {
   
 
   const handleSearchWithDates = (value) => {
-    if(value.target.value !== 'Período entre fechas') {
+    if(value.target.value !== 'fechaResolucion') {
       setSearchWithDates(false)
       return;
     }
@@ -59,6 +62,15 @@ function Home() {
 
       setFilters(`${values.type} | busca: ${values.search}`);
       
+    }else if ( values.type.length !== 0 && values.search.length !== 0 && values.initialDate.length !== 0 && values.finalDate.length !== 0 ) {
+      let newInitialDate = UtilsFunctions.formatDate(values.initialDate);
+      let newFinalDate = UtilsFunctions.formatDate(values.finalDate);
+      
+      let response = await Api.getSearchTimeRange(values.type, values.search, newInitialDate, newFinalDate);
+      setResponseDocs(response.data.response.docs);
+      setResponseFacets(response.data.facet_counts.facet_fields);
+
+      setFilters(`${values.type} | busca: ${values.search} | início: ${newInitialDate} | final: ${newFinalDate}`);
     }
   };
 
@@ -95,7 +107,7 @@ function Home() {
                   <option value={'secretario'}>Secretario</option>
                   <option value={'votacion'}>Votacion</option>
                   <option value={'Archivo de datos'}>Archivo de datos</option>
-                  <option value={'Período entre fechas'}>Período entre fechas</option>
+                  <option value={'fechaResolucion'}>Período entre fechas</option>
                 </Field>
                 <Field name='search' type='text' placeholder='Pesquisar' className='input'/>
                 <button type='submit' className='button-form-search'>
@@ -114,9 +126,12 @@ function Home() {
                           <DatePicker
                             id="initialDate"
                             selected={value}
-                            onChange={(date) => setFieldValue('initialDate', date)}
+                            onChange={(date) => {setFieldValue('initialDate', date); setInitialDate(date)}}
                             placeholderText='Selecione da data inicial'
                             dateFormat='dd/MM/yyyy'
+                            selectsStart
+                            startDate={initialDate}
+                            endDate={finalDate}
                           />
                         );
                       }}
@@ -132,9 +147,13 @@ function Home() {
                           <DatePicker
                             id="finalDate"
                             selected={value}
-                            onChange={(date) => setFieldValue('finalDate', date)}
+                            onChange={(date) => {setFieldValue('finalDate', date); setFinalDate(date)}}
                             placeholderText='Selecione da data final'
                             dateFormat='dd/MM/yyyy'
+                            selectsEnd
+                            startDate={initialDate}
+                            endDate={finalDate}
+                            minDate={initialDate}
                           />
                         );
                       }}
