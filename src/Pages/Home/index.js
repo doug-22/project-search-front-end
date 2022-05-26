@@ -43,13 +43,22 @@ function Home() {
 
   const handleSubmit = async (values) => {
     console.log(values);
-    if(values.search.length !== 0) {
+    if( values.type.length === 0 && values.search.length !== 0 && values.initialDate.length === 0 && values.finalDate.length === 0 ) {
       let response = await Api.getSearch(values.search);
       console.log(response)
       setResponseDocs(response.data.response.docs);
       setResponseFacets(response.data.facet_counts.facet_fields);
 
       setFilters(`busca: ${values.search}`);
+
+    }else if ( values.type.length !== 0 && values.search.length !== 0 && values.initialDate.length === 0 && values.finalDate.length === 0 ) {
+      let response = await Api.getSpecificSearch(values.type, values.search);
+      console.log(response);
+      setResponseDocs(response.data.response.docs);
+      setResponseFacets(response.data.facet_counts.facet_fields);
+
+      setFilters(`${values.type} | busca: ${values.search}`);
+      
     }
   };
 
@@ -78,13 +87,13 @@ function Home() {
               <div className='content-form'>
                 <Field as='select' name='type' className='input' onClick={handleSearchWithDates}>
                   <option value={null}>Campo específico</option>
-                  <option value={'Asunto'}>Asunto</option>
-                  <option value={'Nombre del archivo'}>Nombre del archivo</option>
-                  <option value={'Número de oficina'}>Número de oficina</option>
-                  <option value={'Organo radication'}>Organo radication</option>
-                  <option value={'Ponente'}>Ponente</option>
-                  <option value={'Secretario'}>Secretario</option>
-                  <option value={'Vocacion'}>Vocacion</option>
+                  <option value={'tipoAsunto'}>Asunto</option>
+                  <option value={'nome_arquivo'}>Nombre del archivo</option>
+                  <option value={'numExpediente'}>Número de oficina</option>
+                  <option value={'organoRadicacion'}>Organo radication</option>
+                  <option value={'ponente'}>Ponente</option>
+                  <option value={'secretario'}>Secretario</option>
+                  <option value={'votacion'}>Votacion</option>
                   <option value={'Archivo de datos'}>Archivo de datos</option>
                   <option value={'Período entre fechas'}>Período entre fechas</option>
                 </Field>
