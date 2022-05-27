@@ -44,39 +44,43 @@ function Home() {
     setSearchWithDates(true)
   };
 
+  const handleFilters = () => {
+    setFilters('');
+  }
+
   const handleSubmit = async (values) => {
     console.log(values);
-    if( values.type.length === 0 && values.search.length !== 0 && values.initialDate.length === 0 && values.finalDate.length === 0 ) {
-      let response = await Api.getSearch(values.search);
+    if( values.type.length === 0 && values.term.length !== 0 && values.initialDate.length === 0 && values.finalDate.length === 0 ) {
+      let response = await Api.getSearch(values.term);
       console.log(response)
       setResponseDocs(response.data.response.docs);
       setResponseFacets(response.data.facet_counts.facet_fields);
 
-      setFilters(`busca: ${values.search}`);
+      setFilters(`busca: ${values.term}`);
 
-    }else if ( values.type.length !== 0 && values.search.length !== 0 && values.initialDate.length === 0 && values.finalDate.length === 0 ) {
-      let response = await Api.getSpecificSearch(values.type, values.search);
+    }else if ( values.type.length !== 0 && values.term.length !== 0 && values.initialDate.length === 0 && values.finalDate.length === 0 ) {
+      let response = await Api.getSpecificSearch(values.type, values.term);
       console.log(response);
       setResponseDocs(response.data.response.docs);
       setResponseFacets(response.data.facet_counts.facet_fields);
 
-      setFilters(`${values.type} | busca: ${values.search}`);
+      setFilters(`${values.type} | busca: ${values.term}`);
       
-    }else if ( values.type.length !== 0 && values.search.length !== 0 && values.initialDate.length !== 0 && values.finalDate.length !== 0 ) {
+    }else if ( values.type.length !== 0 && values.term.length !== 0 && values.initialDate.length !== 0 && values.finalDate.length !== 0 ) {
       let newInitialDate = UtilsFunctions.formatDate(values.initialDate);
       let newFinalDate = UtilsFunctions.formatDate(values.finalDate);
       
-      let response = await Api.getSearchTimeRange(values.type, values.search, newInitialDate, newFinalDate);
+      let response = await Api.getSearchTimeRange(values.type, values.term, newInitialDate, newFinalDate);
       setResponseDocs(response.data.response.docs);
       setResponseFacets(response.data.facet_counts.facet_fields);
 
-      setFilters(`${values.type} | busca: ${values.search} | início: ${newInitialDate} | final: ${newFinalDate}`);
+      setFilters(`${values.type} | busca: ${values.term} | ${newInitialDate} -> ${newFinalDate}`);
     }
   };
 
   const initialValues = {
     type: '',
-    search: '',
+    term: '',
     initialDate: '',
     finalDate: ''
   };
@@ -94,80 +98,83 @@ function Home() {
             <Formik
               initialValues={initialValues}
               onSubmit={handleSubmit}
+              onReset={handleFilters}
             >
               <Form>
-              <div className='content-form'>
-                <Field as='select' name='type' className='input' onClick={handleSearchWithDates}>
-                  <option value={null}>Campo específico</option>
-                  <option value={'tipoAsunto'}>Asunto</option>
-                  <option value={'nome_arquivo'}>Nombre del archivo</option>
-                  <option value={'numExpediente'}>Número de oficina</option>
-                  <option value={'organoRadicacion'}>Organo radication</option>
-                  <option value={'ponente'}>Ponente</option>
-                  <option value={'secretario'}>Secretario</option>
-                  <option value={'votacion'}>Votacion</option>
-                  <option value={'Archivo de datos'}>Archivo de datos</option>
-                  <option value={'fechaResolucion'}>Período entre fechas</option>
-                </Field>
-                <Field name='search' type='text' placeholder='Pesquisar' className='input'/>
-                <button type='submit' className='button-form-search'>
-                  <BsSearch />
-                </button>
-              </div>
-              {searchWithDates && 
-                <div className='content-form-date'>
-                  <div className='input-date'>
-                    <label>Data inicial:</label>
-                    <Field name="initialDate">
-                      {({form, field}) => {
-                        const {setFieldValue} = form
-                        const { value } = field
-                        return (
-                          <DatePicker
-                            id="initialDate"
-                            selected={value}
-                            onChange={(date) => {setFieldValue('initialDate', date); setInitialDate(date)}}
-                            placeholderText='Selecione da data inicial'
-                            dateFormat='dd/MM/yyyy'
-                            selectsStart
-                            startDate={initialDate}
-                            endDate={finalDate}
-                          />
-                        );
-                      }}
-                    </Field>
-                  </div>
-                  <div className='input-date'>
-                    <label>Data final:</label>
-                    <Field name="finalDate">
-                      {({form, field}) => {
-                        const {setFieldValue} = form
-                        const { value } = field
-                        return (
-                          <DatePicker
-                            id="finalDate"
-                            selected={value}
-                            onChange={(date) => {setFieldValue('finalDate', date); setFinalDate(date)}}
-                            placeholderText='Selecione da data final'
-                            dateFormat='dd/MM/yyyy'
-                            selectsEnd
-                            startDate={initialDate}
-                            endDate={finalDate}
-                            minDate={initialDate}
-                          />
-                        );
-                      }}
-                    </Field>
-                  </div>
+                <div className='content-form'>
+                  <Field as='select' name='type' className='input' onClick={handleSearchWithDates}>
+                    <option value={null}>Campo específico</option>
+                    <option value={'tipoAsunto'}>Asunto</option>
+                    <option value={'nome_arquivo'}>Nombre del archivo</option>
+                    <option value={'numExpediente'}>Número de oficina</option>
+                    <option value={'organoRadicacion'}>Organo radication</option>
+                    <option value={'ponente'}>Ponente</option>
+                    <option value={'secretario'}>Secretario</option>
+                    <option value={'votacion'}>Votacion</option>
+                    <option value={'Archivo de datos'}>Archivo de datos</option>
+                    <option value={'fechaResolucion'}>Período entre fechas</option>
+                  </Field>
+                  <Field name='term' type='text' placeholder='Pesquisar' className='input'/>
+                  <button type='submit' className='button-form-search'>
+                    <BsSearch />
+                  </button>
                 </div>
-              }
+                {searchWithDates && 
+                  <div className='content-form-date'>
+                    <div className='input-date'>
+                      <label>Data inicial:</label>
+                      <Field name="initialDate">
+                        {({form, field}) => {
+                          const {setFieldValue} = form
+                          const { value } = field
+                          return (
+                            <DatePicker
+                              id="initialDate"
+                              selected={value}
+                              onChange={(date) => {setFieldValue('initialDate', date); setInitialDate(date)}}
+                              placeholderText='Selecione da data inicial'
+                              dateFormat='dd/MM/yyyy'
+                              selectsStart
+                              startDate={initialDate}
+                              endDate={finalDate}
+                            />
+                          );
+                        }}
+                      </Field>
+                    </div>
+                    <div className='input-date'>
+                      <label>Data final:</label>
+                      <Field name="finalDate">
+                        {({form, field}) => {
+                          const {setFieldValue} = form
+                          const { value } = field
+                          return (
+                            <DatePicker
+                              id="finalDate"
+                              selected={value}
+                              onChange={(date) => {setFieldValue('finalDate', date); setFinalDate(date)}}
+                              placeholderText='Selecione da data final'
+                              dateFormat='dd/MM/yyyy'
+                              selectsEnd
+                              startDate={initialDate}
+                              endDate={finalDate}
+                              minDate={initialDate}
+                            />
+                          );
+                        }}
+                      </Field>
+                    </div>
+                  </div>
+                }
+                <div className='content-filters'>
+                  <span><b>Filtros:</b></span>
+                  <span>{filters}</span>
+                  {filters !== '' &&
+                    <button type='reset' className='button-reset-form'>LIMPAR FILTROS</button>
+                  }
+                </div>
               </Form>
             </Formik>
-            <div className='content-filters'>
-              <span><b>Filtros:</b></span>
-              <span>{filters}</span>
-            </div>
-
             
             {responseDocs &&
               responseDocs.map((item, key) => (
