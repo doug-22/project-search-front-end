@@ -24,7 +24,7 @@ function Home() {
     const loadApi = async () => {
       try {
         let response = await Api.getSearch();
-        console.log(response)
+        console.log(response);
         setResponseDocs(response.data.response.docs);
         setResponseFacets(response.data.facet_counts.facet_fields);
       } catch(error) {
@@ -38,10 +38,10 @@ function Home() {
 
   const handleSearchWithDates = (value) => {
     if(value.target.value !== 'fechaResolucion') {
-      setSearchWithDates(false)
+      setSearchWithDates(false);
       return;
     }
-    setSearchWithDates(true)
+    setSearchWithDates(true);
   };
 
   const handleFilters = () => {
@@ -50,32 +50,21 @@ function Home() {
 
   const handleSubmit = async (values) => {
     console.log(values);
-    if( values.type.length === 0 && values.term.length !== 0 && values.initialDate.length === 0 && values.finalDate.length === 0 ) {
-      let response = await Api.getSearch(values.term);
-      console.log(response)
-      setResponseDocs(response.data.response.docs);
-      setResponseFacets(response.data.facet_counts.facet_fields);
-
-      setFilters(`busca: ${values.term}`);
-
-    }else if ( values.type.length !== 0 && values.term.length !== 0 && values.initialDate.length === 0 && values.finalDate.length === 0 ) {
-      let response = await Api.getSpecificSearch(values.type, values.term);
+    if(values.initialDate.length !== 0 && values.finalDate.length !== 0) {
+      let newInitialDate = UtilsFunctions.formatDate(values.initialDate);
+      let newFinalDate = UtilsFunctions.formatDate(values.finalDate);
+      let response = await UtilsFunctions.handleSubmitType(values.type, values.term, newInitialDate, newFinalDate);
       console.log(response);
       setResponseDocs(response.data.response.docs);
       setResponseFacets(response.data.facet_counts.facet_fields);
-
-      setFilters(`${values.type} | busca: ${values.term}`);
-      
-    }else if ( values.type.length !== 0 && values.term.length !== 0 && values.initialDate.length !== 0 && values.finalDate.length !== 0 ) {
-      let newInitialDate = UtilsFunctions.formatDate(values.initialDate);
-      let newFinalDate = UtilsFunctions.formatDate(values.finalDate);
-      
-      let response = await Api.getSearchTimeRange(values.type, values.term, newInitialDate, newFinalDate);
-      setResponseDocs(response.data.response.docs);
-      setResponseFacets(response.data.facet_counts.facet_fields);
-
       setFilters(`${values.type} | busca: ${values.term} | ${newInitialDate} -> ${newFinalDate}`);
+      return;
     }
+    let response = await UtilsFunctions.handleSubmitType(values.type, values.term, values.initialDate, values.finalDate);
+    console.log(response);
+    setResponseDocs(response.data.response.docs);
+    setResponseFacets(response.data.facet_counts.facet_fields);
+    setFilters(`${values.type} | busca: ${values.term}`);
   };
 
   const initialValues = {
