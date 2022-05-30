@@ -28,16 +28,19 @@ export default {
   
       return [year, month, day].join("-");
     },
-    handleSubmitType: async (type, term, initialDate, finalDate) => {
+    handleSubmitType: async (type, term, date, initialDate, finalDate) => {
       let newType = type === 'Campo específico' ? '' : type;
-      if( newType.length === 0 && term.length !== 0 && initialDate.length === 0 && finalDate.length === 0 ) {
+      if( newType.length === 0 && term.length !== 0 && date === false ) {
         let response = await Api.getSearch(term);
         return response;
-      } else if ( newType.length !== 0 && term.length !== 0 && initialDate.length === 0 && finalDate.length === 0 ) {
+      } else if ( newType.length !== 0 && term.length !== 0 && date === false ) {
         let response = await Api.getSpecificSearch(newType, term);
         return response;
-      } else if ( newType.length !== 0 && term.length !== 0 && initialDate.length !== 0 && finalDate.length !== 0 ) {
-        let response = await Api.getSearchTimeRange(newType, term, initialDate, finalDate);
+      } else if ( newType.length !== 0 && term.length !== 0 && date === true ) {
+        let response = await Api.getSpecificSearchTimeRange(newType, term, initialDate, finalDate);
+        return response;
+      } else if (newType.length === 0 && term.length !== 0 & date === true) {
+        let response = await Api.getSearchTimeRange(term, initialDate, finalDate);
         return response;
       }
     }
