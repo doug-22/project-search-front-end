@@ -39,7 +39,7 @@
   width: 60vw;
   height: 40px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -50,7 +50,7 @@
 }
 
 .content-form-date div label {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .button-form-search {
@@ -75,9 +75,27 @@
 .content-filters {
   width: 60vw;
   display: flex;
+  align-items: center;
   gap: 10px;
+  margin-top: 10px;
 }
 
 .content-filters span {
   font-size: 14px;
+  color: #525252;
+}
+
+.button-reset-form {
+  font-weight: bold;
+  border: solid 1px #525252;
+  color: #525252;
+  border-radius: 5px;
+  padding: 5px;
+  transform: scale(0.95);
+}
+
+.button-reset-form:hover {
+  transform: scale(1);
+  background-color: #d9d9d9;
+  color: #000000;
 }
