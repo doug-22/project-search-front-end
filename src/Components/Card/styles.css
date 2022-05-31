@@ -25,6 +25,7 @@
   background-color: #246992;
   color: #ffffff;
   border-radius: 10px;
+  transition: all ease 0.3s;
 }
 
 .content-card-head button:hover {

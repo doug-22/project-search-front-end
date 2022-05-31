@@ -66,6 +66,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  transition: all ease 0.3s;
 }
 
 .button-form-search:hover {
@@ -94,6 +96,7 @@
   color: #525252;
   border-radius: 5px;
   padding: 5px;
+  transition: all ease 0.3s;
 }
 
 .button-reset-form:hover {
