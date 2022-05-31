@@ -2,21 +2,24 @@ import Api from "../Services/Api";
 
 // eslint-disable-next-line
 export default {
-    formatFacets: (list) => {
-        let array_facet = [];
+    formatFacets: (title, list) => {
+        let object_facet = {
+          facetTitle: title,
+          data: []
+        };
         for(let i = 1; i <= list.length;) {
             if(list[i] === 0) {
               i += 2;
             }else {
               let newSubject = {
-                title: list[i-1],
+                title: list[i-1].length > 100 ? list[i-1].substring(0, 100) + '...' : list[i-1],
                 amount: list[i]
               }
-              array_facet.push(newSubject)
+              object_facet.data.push(newSubject)
               i += 2
             } 
           }
-        return array_facet;
+        return object_facet;
     },
     formatDate: (date) => {
       let day = "" + date.getDate();
