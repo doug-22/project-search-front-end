@@ -8,13 +8,12 @@ function Modal({id = 'modal', onclose = () => {}, facetData}) {
 	const handleOutsideClick = (ev) => {
 		if(ev.target.id === id) onclose() }
 
-	console.log(facetData)
 
   return (
     <div id={id} className='modal' onClick={handleOutsideClick}>
 			<div className='container-modal'>
+				<h3>Busca por facets | {facetData.facetTitle}</h3>
 				<div className='content-modal'>
-					<h3>Busca por facets | {facetData.facetTitle}</h3>
 					<div className='content-buttons'>
 						{facetData.data.map((item, key) => (
 							<button className='facet-button' key={key}>
