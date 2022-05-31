@@ -35,6 +35,10 @@ input {
   width: initial !important;
 }
 
+.react-datepicker-wrapper div {
+  position: static;
+}
+
 .react-datepicker-wrapper div input {
   text-indent: 5px;
   font-size: 15px;

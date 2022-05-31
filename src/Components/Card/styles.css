@@ -21,16 +21,15 @@
   gap: 10px;
   height: max-content;
   padding: 5px 10px;
-  font-size: 16px;
+  font-size: 15px;
   background-color: #246992;
   color: #ffffff;
   border-radius: 10px;
-  transform: scale(0.9);
 }
 
 .content-card-head button:hover {
   background-color: #305a75;
-  transform: scale(0.95);
+  font-size: 16px;
 }
 
 .content-title {

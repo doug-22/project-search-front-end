@@ -15,6 +15,7 @@
 
 .content-form {
   width: 60vw;
+  height: 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -54,10 +55,10 @@
 }
 
 .button-form-search {
-  width: 40px;
-  height: 40px;
+  width: 37px;
+  height: 37px;
+  margin-left: 3px;
   border-radius: 10px;
-  transform: scale(0.9);
   background-color: #246992;
   color: #ffffff;
   font-size: 18px;
@@ -68,7 +69,9 @@
 }
 
 .button-form-search:hover {
-  transform: scale(1);
+  width: 40px;
+  height: 40px;
+  margin-left: 0;
   background-color: #305a75;
 }
 
@@ -91,11 +94,9 @@
   color: #525252;
   border-radius: 5px;
   padding: 5px;
-  transform: scale(0.95);
 }
 
 .button-reset-form:hover {
-  transform: scale(1);
   background-color: #d9d9d9;
   color: #000000;
 }
