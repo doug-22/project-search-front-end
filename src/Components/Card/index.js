@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BsBack } from 'react-icons/bs';
+import ModalDocument from '../ModalDocument';
 
 import './styles.css';
 
 function Card({subject, secretary, file, description}) {
+
+  const fullDescription = description;
+  const newFileName = file.slice(0, -5);
+  const [ModalDocumentVisible, setModalDocumentVisible] = useState(false);
     
   if (description.length > 200) {
 		description = description.substring(0, 200) + '...';
 	}
-
-  const newFileName = file.slice(0, -5);
-
 
   return (
     <div className='container-card'>
@@ -29,7 +31,7 @@ function Card({subject, secretary, file, description}) {
             <p>{newFileName}</p>
           </div>
         </div>
-        <button>
+        <button onClick={() => {setModalDocumentVisible(true)}}>
           <p>Abrir</p>
           <BsBack />
         </button>
@@ -37,6 +39,7 @@ function Card({subject, secretary, file, description}) {
       <div className='content-card-description'>
         <p>{description}</p>
       </div>
+      {ModalDocumentVisible ? <ModalDocument onclose={() => setModalDocumentVisible(false)} subject={subject} secretary={secretary} file={newFileName} description={fullDescription}/> : null}
     </div>
   );
 }
