@@ -1,0 +1,85 @@
+.modal {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container-modal {
+  width: 60%;
+  height: 80%;
+  background-color: #246992;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.container-modal h3 {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+  padding-bottom: 20px;
+  border-bottom: solid 1px #ffffff;
+}
+
+.content-modal {
+  width: 100%;
+  height: calc(100% - 100px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  overflow-y: auto;
+}
+
+.content-modal::-webkit-scrollbar {
+  background-color: #246992;
+  width: 12px;
+}
+.content-modal::-webkit-scrollbar-thumb {
+  background-color: #305a75;
+  border-radius: 20px;
+  border: 3px solid #246992;
+}
+
+.content-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.facet-button {
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  color: #ffffff;
+  font-size: 15px;
+  padding: 0 20px;
+  transform: scale(0.95);
+  transition: all ease 0.3s;
+}
+
+.facet-button p {
+  max-width: 80%;
+  text-align: left;
+}
+
+.facet-button:hover {
+  background-color: #305a75;
+  transform: scale(1);
+}
