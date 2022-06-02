@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import UtilsFunctions from '../../Utils/Utils.functions';
 import { BsBack } from 'react-icons/bs';
+import Context from '../../Contexts/context';
 
 import './styles.css';
 
 import Logo from '../../Assets/logo.png';
 import ModalFacet from '../ModalFacet';
 
-function Sidebar({facet_subject, facet_secretary, facet_speaker}) {
+function Sidebar() {
 
+  const [context] = useContext(Context);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState();
 
@@ -17,9 +19,9 @@ function Sidebar({facet_subject, facet_secretary, facet_speaker}) {
     setModalVisible(true);
   }
   
-  const newFacetSubject = UtilsFunctions.formatFacets('Assunto', facet_subject);
-  const newFacetSecretary = UtilsFunctions.formatFacets('Secretário', facet_secretary);
-  const newFacetSpeaker = UtilsFunctions.formatFacets('Palestrante', facet_speaker);
+  const newFacetSubject = UtilsFunctions.formatFacets('Assunto', 'tipoAsunto', context.facets.tipoAsunto_facet);
+  const newFacetSecretary = UtilsFunctions.formatFacets('Secretário', 'secretario',context.facets.secretario_facet);
+  const newFacetSpeaker = UtilsFunctions.formatFacets('Palestrante', 'ponente', context.facets.ponente_facet);
 
   return (
     <div className='container-sidebar'>

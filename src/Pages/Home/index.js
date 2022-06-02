@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import DatePicker from 'react-datepicker';
 import { BsSearch } from 'react-icons/bs';
+import Context from '../../Contexts/context';
 
 import Sidebar from '../../Components/Sidebar';
 import Card from '../../Components/Card';
@@ -12,11 +13,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 import UtilsFunctions from '../../Utils/Utils.functions';
 
 function Home() {
-  
+
+  const [context, setContext] = useContext(Context);
   const [searchWithDates, setSearchWithDates] = useState(false);
-  const [responseFacets, setResponseFacets] = useState();
-  const [responseDocs, setResponseDocs] = useState();
-  const [filters, setFilters] = useState('');
   const [initialDate, setInitialDate] = useState();
   const [finalDate, setFinalDate] = useState();
 
@@ -24,40 +23,68 @@ function Home() {
     const loadApi = async () => {
       try {
         let response = await Api.getSearch();
-        console.log(response);
-        setResponseDocs(response.data.response.docs);
-        setResponseFacets(response.data.facet_counts.facet_fields);
+        setContext(
+          {
+            data: response.data.response.docs,
+            facets: response.data.facet_counts.facet_fields,
+            filters: '',
+            queryString: '',
+            search: {
+              type: '',
+              term: '',
+              toggleDate: false,
+              initialDate: '',
+              finalDate: ''
+          }
+          }
+        );
       } catch(error) {
         console.error(error);
       }
     };
 
     loadApi();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
   const handleFilters = () => {
-    setFilters('');
+    setContext({
+      data: context.data,
+      facets: context.facets,
+      filters: '',
+      queryString: '',
+      search: context.search
+    });
     setSearchWithDates(false);
   }
 
   const handleSubmit = async (values) => {
-    console.log(values);
     if(values.toggleDate === true) {
       let newInitialDate = UtilsFunctions.formatDate(values.initialDate);
       let newFinalDate = UtilsFunctions.formatDate(values.finalDate);
       let response = await UtilsFunctions.handleSubmitType(values.type, values.term, values.toggleDate, newInitialDate, newFinalDate);
-      console.log(response);
-      setResponseDocs(response.data.response.docs);
-      setResponseFacets(response.data.facet_counts.facet_fields);
-      setFilters(`${values.type} | Busca: ${values.term} | ${newInitialDate} -> ${newFinalDate}`);
+      setContext(
+        {
+          data: response.data.response.docs,
+          facets: response.data.facet_counts.facet_fields,
+          filters: values.type.length === 0 ? `Busca: ${values.term} | ${newInitialDate} -> ${newFinalDate}` : `${values.type} | Busca: ${values.term} | ${newInitialDate} -> ${newFinalDate}`,
+          queryString: values.type.length === 0 ? `&fq=fechaResolucion:[${newInitialDate}T05:00:00Z%20TO%20${newFinalDate}T05:00:00Z]&q=${values.term}` : `&fq=fechaResolucion:[${newInitialDate}T05:00:00Z%20TO%20${newFinalDate}T05:00:00Z]&q=${values.type}:${values.term}`,
+          search: values
+        }
+      );
       return;
     }
     let response = await UtilsFunctions.handleSubmitType(values.type, values.term, values.toggleDate, values.initialDate, values.finalDate);
-    console.log(response);
-    setResponseDocs(response.data.response.docs);
-    setResponseFacets(response.data.facet_counts.facet_fields);
-    setFilters(`${values.type} | Busca: ${values.term}`);
+    setContext(
+      {
+        data: response.data.response.docs,
+        facets: response.data.facet_counts.facet_fields,
+        filters: values.type.length === 0 ? `Busca: ${values.term}` : `${values.type} | Busca: ${values.term}`,
+        queryString: values.type.length === 0 ? `&q=${values.term}` : `&q=${values.type}:${values.term}`,
+        search: values
+      }
+    );
   };
 
   const initialValues = {
@@ -68,15 +95,11 @@ function Home() {
     finalDate: ''
   };
 
-
-  console.log(responseDocs)
-  console.log(responseFacets)
-
   return (
     <>
-      {responseFacets &&
+      {context.facets &&
         <div className='container-home'>
-          <Sidebar facet_subject={responseFacets.tipoAsunto_facet} facet_secretary={responseFacets.secretario_facet} facet_speaker={responseFacets.ponente_facet} />
+          <Sidebar />
           <div className='content-cards'>
             <Formik
               initialValues={initialValues}
@@ -102,12 +125,12 @@ function Home() {
                   </button>
                 </div>
                 
-                  <div className='content-form-date'>
-                    <div className='input-date'>
-                      <label>Inserir datas:</label>
-                      <Field name='toggleDate' type='checkbox' onClick={(ev) => setSearchWithDates(ev.target.checked)}/>
-                    </div>
-                {searchWithDates && 
+                <div className='content-form-date'>
+                  <div className='input-date'>
+                    <label>Inserir datas:</label>
+                    <Field name='toggleDate' type='checkbox' onClick={(ev) => setSearchWithDates(ev.target.checked)}/>
+                  </div>
+                  {searchWithDates && 
                     <>
                       <div className='input-date'>
                         <label>Data inicial:</label>
@@ -154,19 +177,19 @@ function Home() {
                       </div>
                     </>
                     }
-                  </div>
+                </div>
                 <div className='content-filters'>
                   <span><b>Filtros:</b></span>
-                  <span>{filters}</span>
-                  {filters !== '' &&
+                  <span>{context.filters}</span>
+                  {context.filters !== '' &&
                     <button type='reset' className='button-reset-form'>LIMPAR FILTROS</button>
                   }
                 </div>
               </Form>
             </Formik>
             
-            {responseDocs &&
-              responseDocs.map((item, key) => (
+            {context.data &&
+              context.data.map((item, key) => (
                 <Card key={key} subject={item.tipoAsunto} secretary={item.secretario} file={item.nome_arquivo} description={item.data_file} />
               ))
             }
