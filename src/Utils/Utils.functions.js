@@ -2,20 +2,21 @@ import Api from "../Services/Api";
 
 // eslint-disable-next-line
 export default {
-    formatFacets: (title, list) => {
+    formatFacets: (title, type,list) => {
         let object_facet = {
           facetTitle: title,
+          facetType: type,
           data: []
         };
         for(let i = 1; i <= list.length;) {
             if(list[i] === 0) {
               i += 2;
             }else {
-              let newSubject = {
-                title: list[i-1].length > 100 ? list[i-1].substring(0, 100) + '...' : list[i-1],
+              let newObjectFacet = {
+                title: list[i-1],
                 amount: list[i]
               }
-              object_facet.data.push(newSubject)
+              object_facet.data.push(newObjectFacet)
               i += 2
             } 
           }
