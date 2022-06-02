@@ -26,5 +26,13 @@ export default {
   getSearchTimeRange: async (term, initialDate, finalDate) => {
     let response = await Api.get(`/select?facet.field=tipoAsunto_facet&facet.field=secretario_facet&facet.field=ponente_facet&facet=on&fq=fechaResolucion:[${initialDate}T05:00:00Z%20TO%20${finalDate}T05:00:00Z]&q=${term}&fl=*&wt=json`);
     return response;
+  },
+  getFacetSearch: async (queryString) => {
+    if(queryString.includes('&q=')){
+      let response = await Api.get(`/select?facet.field=tipoAsunto_facet&facet.field=secretario_facet&facet.field=ponente_facet&facet=on${queryString}&fl=*&wt=json`);
+      return response;
+    }
+    let response = await Api.get(`/select?facet.field=tipoAsunto_facet&facet.field=secretario_facet&facet.field=ponente_facet&facet=on&q=*:*${queryString}&fl=*&wt=json`);
+    return response;
   }
 };
