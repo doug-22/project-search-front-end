@@ -47,5 +47,26 @@ export default {
         let response = await Api.getSearchTimeRange(term, initialDate, finalDate);
         return response;
       }
+    },
+    handleHighlightingDescription: (name, highlighting, description) => {
+      let newDescription = '';
+      if(highlighting) {
+        Object.keys(highlighting).forEach(function(item){
+          if(name === item){
+            const descriptionContext = highlighting[item];
+            if(descriptionContext.data_file) {
+              descriptionContext.data_file.map((item) => {
+                newDescription += '...' + item
+                return newDescription;
+              });
+            } else {
+              newDescription = description;
+            }
+          }
+         });
+      } else {
+        newDescription = description;
+      }
+      return newDescription
     }
 }
