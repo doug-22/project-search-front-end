@@ -27,6 +27,7 @@ function Home() {
           {
             data: response.data.response.docs,
             facets: response.data.facet_counts.facet_fields,
+            highlighting: response.data.highlighting,
             filters: '',
             queryString: '',
             search: {
@@ -68,6 +69,7 @@ function Home() {
         {
           data: response.data.response.docs,
           facets: response.data.facet_counts.facet_fields,
+          highlighting: response.data.highlighting,
           filters: values.type.length === 0 ? `Busca: ${values.term} | ${newInitialDate} -> ${newFinalDate}` : `${values.type} | Busca: ${values.term} | ${newInitialDate} -> ${newFinalDate}`,
           queryString: values.type.length === 0 ? `&fq=fechaResolucion:[${newInitialDate}T05:00:00Z%20TO%20${newFinalDate}T05:00:00Z]&q=${values.term}` : `&fq=fechaResolucion:[${newInitialDate}T05:00:00Z%20TO%20${newFinalDate}T05:00:00Z]&q=${values.type}:${values.term}`,
           search: values
@@ -80,6 +82,7 @@ function Home() {
       {
         data: response.data.response.docs,
         facets: response.data.facet_counts.facet_fields,
+        highlighting: response.data.highlighting,
         filters: values.type.length === 0 ? `Busca: ${values.term}` : `${values.type} | Busca: ${values.term}`,
         queryString: values.type.length === 0 ? `&q=${values.term}` : `&q=${values.type}:${values.term}`,
         search: values
@@ -93,7 +96,7 @@ function Home() {
     toggleDate: false,
     initialDate: '',
     finalDate: ''
-  };
+  };  
 
   return (
     <>

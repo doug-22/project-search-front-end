@@ -21,6 +21,7 @@ function Modal({id = 'modal', onclose = () => {}, facetData}) {
 				{
 					data: response.data.response.docs,
 					facets: response.data.facet_counts.facet_fields,
+					highlighting: response.data.highlighting,
 					filters: context.filters.includes(`${type}: "${term}"`) ? context.filters : (context.filters.length === 0 ? `${type}: "${term}"` : `${context.filters} | ${type}: "${term}"`),
 					queryString: queryString,
 					search: {
@@ -40,6 +41,7 @@ function Modal({id = 'modal', onclose = () => {}, facetData}) {
       {
         data: response.data.response.docs,
         facets: response.data.facet_counts.facet_fields,
+				highlighting: response.data.highlighting,
         filters: context.filters.includes(`${type}: "${term}"`) ? context.filters : (context.filters.length === 0 ? `${type}: "${term}"` : `${context.filters} | ${type}: "${term}"`),
 				queryString: queryString,
 				search: {

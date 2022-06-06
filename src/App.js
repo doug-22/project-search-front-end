@@ -9,6 +9,7 @@ function App() {
   const initialState = {
     data: undefined,
     facets: undefined,
+    highlighting: undefined,
     filters: '',
     queryString: '',
     search: {

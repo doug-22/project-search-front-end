@@ -3,6 +3,7 @@ import { createContext } from "react";
 const initialState = {
     data: undefined,
     facets: undefined,
+    highlighting: undefined,
     filters: '',
     queryString: '',
     search: {
