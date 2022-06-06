@@ -73,3 +73,7 @@
   padding: 10px 20px;
   text-align: justify;
 }
+
+.content-description-modal em {
+  font-weight: bold;
+}

@@ -52,3 +52,7 @@
 .content-card-description p {
   font-size: 16px;
 }
+
+.content-card-description p em {
+  font-weight: bold;
+}

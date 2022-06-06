@@ -13,14 +13,14 @@ function ModalDocument({id = 'modal-document', onclose = () => {}, subject, secr
 			<div className='container-modal-document'>
 				<div className='content-head-modal'>
 					<div>
+						<p><b>Arquivo:</b> {file}</p>
 						<p><b>Assunto:</b> {subject}</p>
 						<p><b>Secretário:</b> {secretary}</p>
-						<p><b>Arquivo:</b> {file}</p>
 					</div>
 					<a href='https://blog.sajadv.com.br/jurisprudencia-e-advocacia/' target='_blank' rel='noreferrer'>Abrir em outra aba</a>
 				</div>
 				<div className='content-modal-document'>
-					<p className='content-description-modal'>{description}</p>
+					<p className='content-description-modal' dangerouslySetInnerHTML={{ __html: description }}></p>
 				</div>
 			</div>
 		</div>
