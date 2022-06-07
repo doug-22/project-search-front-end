@@ -8,7 +8,7 @@ import './styles.css';
 import Logo from '../../Assets/logo.png';
 import ModalFacet from '../ModalFacet';
 
-function Sidebar() {
+function Sidebar({setOffset}) {
 
   const [context] = useContext(Context);
   const [modalVisible, setModalVisible] = useState(false);
@@ -44,7 +44,7 @@ function Sidebar() {
           <BsBack />
         </button>
       </div>
-      {modalVisible ? <ModalFacet onclose={() => setModalVisible(false)} facetData={modalData} /> : null}
+      {modalVisible ? <ModalFacet onclose={() => setModalVisible(false)} facetData={modalData} setOffset={setOffset}/> : null}
     </div>
   );
 }

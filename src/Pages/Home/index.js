@@ -1,16 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import DatePicker from 'react-datepicker';
-import { BsSearch } from 'react-icons/bs';
 import Context from '../../Contexts/context';
+import Api from '../../Services/Api';
+import UtilsFunctions from '../../Utils/Utils.functions';
 
 import Sidebar from '../../Components/Sidebar';
 import Card from '../../Components/Card';
-import Api from '../../Services/Api';
+import Pagination from '../../Components/Pagination';
 
 import './styles.css';
 import 'react-datepicker/dist/react-datepicker.css';
-import UtilsFunctions from '../../Utils/Utils.functions';
+import { BsSearch } from 'react-icons/bs';
+
+const LIMIT = 10;
 
 function Home() {
 
@@ -18,18 +21,22 @@ function Home() {
   const [searchWithDates, setSearchWithDates] = useState(false);
   const [initialDate, setInitialDate] = useState();
   const [finalDate, setFinalDate] = useState();
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     const loadApi = async () => {
       try {
-        let response = await Api.getSearch();
+        let indexString = context.queryString.indexOf('&start=');
+        let subQuery = context.queryString.substr(indexString);
+        const queryString = context.queryString.replace(subQuery, `&start=${offset}`);
+        let response = await Api.getSearchResults(queryString);
         setContext(
           {
-            data: response.data.response.docs,
+            data: response.data.response,
             facets: response.data.facet_counts.facet_fields,
             highlighting: response.data.highlighting,
-            filters: '',
-            queryString: '',
+            filters: context.filters,
+            queryString: queryString,
             search: {
               type: '',
               term: '',
@@ -46,7 +53,7 @@ function Home() {
 
     loadApi();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [offset]);
 
 
   const handleFilters = () => {
@@ -60,34 +67,40 @@ function Home() {
     setSearchWithDates(false);
   }
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values) => {    
     if(values.toggleDate === true) {
       let newInitialDate = UtilsFunctions.formatDate(values.initialDate);
       let newFinalDate = UtilsFunctions.formatDate(values.finalDate);
-      let response = await UtilsFunctions.handleSubmitType(values.type, values.term, values.toggleDate, newInitialDate, newFinalDate);
+      const queryString = UtilsFunctions.handleQueryString(values.type, values.term, values.toggleDate, newInitialDate, newFinalDate);
+      let response = await Api.getSearchResults(queryString);
       setContext(
         {
-          data: response.data.response.docs,
+          data: response.data.response,
           facets: response.data.facet_counts.facet_fields,
           highlighting: response.data.highlighting,
-          filters: values.type.length === 0 ? `Busca: ${values.term} | ${newInitialDate} -> ${newFinalDate}` : `${values.type} | Busca: ${values.term} | ${newInitialDate} -> ${newFinalDate}`,
-          queryString: values.type.length === 0 ? `&fq=fechaResolucion:[${newInitialDate}T05:00:00Z%20TO%20${newFinalDate}T05:00:00Z]&q=${values.term}` : `&fq=fechaResolucion:[${newInitialDate}T05:00:00Z%20TO%20${newFinalDate}T05:00:00Z]&q=${values.type}:${values.term}`,
+          filters: (values.type.length === 0 || values.type === 'Campo específico') ? `Busca: ${values.term} | ${newInitialDate} -> ${newFinalDate}` : `${values.type} | Busca: ${values.term} | ${newInitialDate} -> ${newFinalDate}`,
+          queryString: queryString,
           search: values
         }
       );
+      setOffset(0);
       return;
     }
-    let response = await UtilsFunctions.handleSubmitType(values.type, values.term, values.toggleDate, values.initialDate, values.finalDate);
+
+    const queryString = UtilsFunctions.handleQueryString(values.type, values.term, values.toggleDate, values.initialDate, values.finalDate);
+    console.log(queryString)
+    let response = await Api.getSearchResults(queryString);
     setContext(
       {
-        data: response.data.response.docs,
+        data: response.data.response,
         facets: response.data.facet_counts.facet_fields,
         highlighting: response.data.highlighting,
-        filters: values.type.length === 0 ? `Busca: ${values.term}` : `${values.type} | Busca: ${values.term}`,
-        queryString: values.type.length === 0 ? `&q=${values.term}` : `&q=${values.type}:${values.term}`,
+        filters: (values.type.length === 0 || values.type === 'Campo específico') ? `Busca: ${values.term}` : `${values.type} | Busca: ${values.term}`,
+        queryString: queryString,
         search: values
       }
     );
+    setOffset(0);
   };
 
   const initialValues = {
@@ -96,13 +109,13 @@ function Home() {
     toggleDate: false,
     initialDate: '',
     finalDate: ''
-  };  
+  };
 
   return (
     <>
       {context.facets &&
         <div className='container-home'>
-          <Sidebar />
+          <Sidebar setOffset={setOffset} />
           <div className='content-cards'>
             <Formik
               initialValues={initialValues}
@@ -190,11 +203,18 @@ function Home() {
                 </div>
               </Form>
             </Formik>
-            
-            {context.data &&
-              context.data.map((item, key) => (
+            <div className='container-pagination-results'>
+              <p>{context.data.numFound} Resultados | Página {offset ? offset / LIMIT + 1 : 1} de {Math.ceil(context.data.numFound / LIMIT)} </p>
+            </div>
+            {context.data.docs &&
+              context.data.docs.map((item, key) => (
                 <Card key={key} subject={item.tipoAsunto} secretary={item.secretario} file={item.nome_arquivo} description={item.data_file} />
               ))
+            }
+
+            {context.data.docs.length > 0 && (
+              <Pagination limit={LIMIT} total={context.data.numFound} offset={offset} setOffset={setOffset} />
+              )
             }
 
           </div>
