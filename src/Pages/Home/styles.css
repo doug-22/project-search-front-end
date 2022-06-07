@@ -104,3 +104,11 @@
   background-color: #d9d9d9;
   color: #000000;
 }
+
+.container-spell-words {
+  width: calc(100% - 100px);
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
