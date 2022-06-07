@@ -33,7 +33,13 @@
   color: #ffffff;
 }
 
-.content-head-modal a {
+.content-buttons-modal {
+  display: flex;
+  flex-direction: column;
+}
+
+.content-buttons-modal a,
+.content-buttons-modal button {
   height: max-content;
   padding: 5px;
   border: solid 1px #ffffff;
@@ -42,7 +48,13 @@
   transition: all ease 0.3s;
 }
 
-.content-head-modal a:hover {
+.content-buttons-modal button {
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.content-buttons-modal a:hover,
+.content-buttons-modal button:hover {
   background-color: #305a75;
   transform: scale(1);
 }
