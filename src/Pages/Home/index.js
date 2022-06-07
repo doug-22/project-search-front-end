@@ -12,6 +12,7 @@ import Pagination from '../../Components/Pagination';
 import './styles.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { BsSearch } from 'react-icons/bs';
+import FieldSpell from '../../Components/FieldSpell';
 
 const LIMIT = 10;
 
@@ -19,6 +20,7 @@ function Home() {
 
   const [context, setContext] = useContext(Context);
   const [searchWithDates, setSearchWithDates] = useState(false);
+  const [spell, setSpell] = useState();
   const [initialDate, setInitialDate] = useState();
   const [finalDate, setFinalDate] = useState();
   const [offset, setOffset] = useState(0);
@@ -55,7 +57,6 @@ function Home() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offset]);
 
-
   const handleFilters = () => {
     setContext({
       data: context.data,
@@ -88,8 +89,8 @@ function Home() {
     }
 
     const queryString = UtilsFunctions.handleQueryString(values.type, values.term, values.toggleDate, values.initialDate, values.finalDate);
-    console.log(queryString)
     let response = await Api.getSearchResults(queryString);
+    setSpell(response.data.spellcheck);
     setContext(
       {
         data: response.data.response,
@@ -211,6 +212,14 @@ function Home() {
                 <Card key={key} subject={item.tipoAsunto} secretary={item.secretario} file={item.nome_arquivo} description={item.data_file} />
               ))
             }
+
+            <div className='container-spell-words'>
+            {spell && 
+                spell.suggestions[1].suggestion.map((item, key) => (
+                  <FieldSpell key={key} word={item.word} freq={item.freq} setSpell={setSpell} />
+                ))
+              }
+            </div>
 
             {context.data.docs.length > 0 && (
               <Pagination limit={LIMIT} total={context.data.numFound} offset={offset} setOffset={setOffset} />

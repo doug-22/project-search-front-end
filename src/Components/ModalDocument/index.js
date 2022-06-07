@@ -17,7 +17,10 @@ function ModalDocument({id = 'modal-document', onclose = () => {}, subject, secr
 						<p><b>Assunto:</b> {subject}</p>
 						<p><b>Secretário:</b> {secretary}</p>
 					</div>
-					<a href='https://blog.sajadv.com.br/jurisprudencia-e-advocacia/' target='_blank' rel='noreferrer'>Abrir em outra aba</a>
+					<div className='content-buttons-modal'>
+						<button onClick={() => onclose()}>Fechar</button>
+						<a href='https://blog.sajadv.com.br/jurisprudencia-e-advocacia/' target='_blank' rel='noreferrer'>Abrir em outra aba</a>
+					</div>
 				</div>
 				<div className='content-modal-document'>
 					<p className='content-description-modal' dangerouslySetInnerHTML={{ __html: description }}></p>

@@ -1,0 +1,15 @@
+.spell-word {
+  width: max-content;
+  height: max-content;
+  border: solid 2px #246992;
+  border-radius: 5px;
+  padding: 5px 8px;
+  font-size: 14px;
+  color: #246992;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.spell-word:hover {
+  background-color: #d9d9d9;
+}
