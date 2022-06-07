@@ -5,7 +5,7 @@ import { BsSearch } from 'react-icons/bs';
 
 import './styles.css';
 
-function Modal({id = 'modal', onclose = () => {}, facetData}) {
+function Modal({id = 'modal', onclose = () => {}, facetData, setOffset}) {
 
 	const [context, setContext] = useContext(Context);
 
@@ -14,12 +14,16 @@ function Modal({id = 'modal', onclose = () => {}, facetData}) {
 	}
 
 	const handleFacetSubmit = async (type, term) => {
-		const queryString = context.queryString.includes(`&fq=${type}:"${term}"`) ? context.queryString : `${context.queryString}&fq=${type}:"${term}"`;
+		let queryStringAux = context.queryString.includes(`&fq=${type}:"${term}"`) ? context.queryString : `&fq=${type}:"${term}"${context.queryString}`;
+		let indexString = queryStringAux.indexOf('&start=');
+		let subQuery = queryStringAux.substr(indexString);
+		const queryString = queryStringAux.replace(subQuery, `&start=0`);
+
 		if(context.search.toggleDate === true) {
-			let response = await Api.getFacetSearch(queryString);
+			let response = await Api.getSearchResults(queryString);
 			setContext(
 				{
-					data: response.data.response.docs,
+					data: response.data.response,
 					facets: response.data.facet_counts.facet_fields,
 					highlighting: response.data.highlighting,
 					filters: context.filters.includes(`${type}: "${term}"`) ? context.filters : (context.filters.length === 0 ? `${type}: "${term}"` : `${context.filters} | ${type}: "${term}"`),
@@ -34,12 +38,13 @@ function Modal({id = 'modal', onclose = () => {}, facetData}) {
 				}
 			);
 			onclose();
+			setOffset(0)
 			return;
 		}
-		let response = await Api.getFacetSearch(queryString);
+		let response = await Api.getSearchResults(queryString);
 		setContext(
       {
-        data: response.data.response.docs,
+        data: response.data.response,
         facets: response.data.facet_counts.facet_fields,
 				highlighting: response.data.highlighting,
         filters: context.filters.includes(`${type}: "${term}"`) ? context.filters : (context.filters.length === 0 ? `${type}: "${term}"` : `${context.filters} | ${type}: "${term}"`),
@@ -54,6 +59,7 @@ function Modal({id = 'modal', onclose = () => {}, facetData}) {
       }
     );
 		onclose();
+		setOffset(0);
 	}
 
 

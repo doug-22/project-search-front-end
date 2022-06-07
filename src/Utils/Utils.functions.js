@@ -1,5 +1,3 @@
-import Api from "../Services/Api";
-
 // eslint-disable-next-line
 export default {
     formatFacets: (title, type,list) => {
@@ -32,20 +30,20 @@ export default {
   
       return [year, month, day].join("-");
     },
-    handleSubmitType: async (type, term, date, initialDate, finalDate) => {
+    handleQueryString: (type, term, date, initialDate, finalDate) => {
       let newType = type === 'Campo específico' ? '' : type;
-      if( newType.length === 0 && term.length !== 0 && date === false ) {
-        let response = await Api.getSearch(term);
-        return response;
-      } else if ( newType.length !== 0 && term.length !== 0 && date === false ) {
-        let response = await Api.getSpecificSearch(newType, term);
-        return response;
+      if(newType.length === 0 && term.length !== 0 && date === false) {
+        const queryString = `&q=${term}&start=0`;
+        return queryString;
+      } else if (newType.length !== 0 && term.length !== 0 && date === false) {
+        const queryString = `&q=${newType}:${term}&start=0`;
+        return queryString;
       } else if ( newType.length !== 0 && term.length !== 0 && date === true ) {
-        let response = await Api.getSpecificSearchTimeRange(newType, term, initialDate, finalDate);
-        return response;
-      } else if (newType.length === 0 && term.length !== 0 & date === true) {
-        let response = await Api.getSearchTimeRange(term, initialDate, finalDate);
-        return response;
+        const queryString = `&q=${newType}:${term}&fq=fechaResolucion:[${initialDate}T05:00:00Z%20TO%20${finalDate}T05:00:00Z]&start=0`;
+        return queryString;
+      } else if ( newType.length === 0 && term.length !== 0 & date === true ) {
+        const queryString = `&q=${term}&fq=fechaResolucion:[${initialDate}T05:00:00Z%20TO%20${finalDate}T05:00:00Z]&start=0`;
+        return queryString;
       }
     },
     handleHighlightingDescription: (name, highlighting, description) => {
