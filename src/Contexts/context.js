@@ -5,7 +5,7 @@ const initialState = {
     facets: undefined,
     highlighting: undefined,
     filters: '',
-    queryString: '',
+    queryString: '&start=',
     search: {
         type: '',
         term: '',

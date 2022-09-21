@@ -62,7 +62,7 @@ function Home() {
       data: context.data,
       facets: context.facets,
       filters: '',
-      queryString: '',
+      queryString: context.queryString,
       search: context.search
     });
     setSearchWithDates(false);
