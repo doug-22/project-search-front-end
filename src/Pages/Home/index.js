@@ -215,13 +215,13 @@ function Home() {
 
             <div className='container-spell-words'>
             {spell && 
-                spell.suggestions[1].suggestion.map((item, key) => (
+                spell?.suggestions[1]?.suggestion.map((item, key) => (
                   <FieldSpell key={key} word={item.word} freq={item.freq} setSpell={setSpell} />
                 ))
               }
             </div>
 
-            {context.data.docs.length > 0 && (
+            {context?.data?.docs?.length > 0 && (
               <Pagination limit={LIMIT} total={context.data.numFound} offset={offset} setOffset={setOffset} />
               )
             }
