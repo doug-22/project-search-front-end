@@ -49,7 +49,7 @@ function Home() {
           }
         );
       } catch(error) {
-        console.error(error);
+        // console.error(error);
       }
     };
 
